@@ -1,0 +1,92 @@
+package com.company;
+
+import java.io.*;
+import java.util.ArrayList;
+
+class Solution {
+    public static void main(String[] args) throws Exception {
+
+        if (args.length != 0) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String fileName = reader.readLine();
+            reader.close();
+
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
+
+            ArrayList<String> lines = new ArrayList<>();
+
+            while (bufferedReader.ready()) {
+                String line = bufferedReader.readLine();
+                lines.add(line);
+            }
+            bufferedReader.close();
+
+            switch (args[0]) {
+                case "-c" -> {
+                    BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
+
+                    int maxId = 0;
+
+                    for (String line : lines) {
+                        int id = Integer.parseInt(line.substring(0, 8).trim());
+                        if (id > maxId) maxId = id;
+                    }
+
+                    String productName = args[1];
+                    double price = Double.parseDouble(args[2]);
+                    int quantity = Integer.parseInt(args[3]);
+
+                    String toWrite = String.format("%-8d%-30s%-8.2f%-4d", maxId + 1, productName, price, quantity);
+
+                    bufferedWriter.newLine();
+                    bufferedWriter.write(toWrite);
+                    bufferedWriter.close();
+
+                }
+                case "-u" -> {
+                    BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
+                    int id = Integer.parseInt(args[1]);
+                    String productName = args[2];
+                    double price = Double.parseDouble(args[3]);
+                    int quantity = Integer.parseInt(args[4]);
+
+                    for (String line : lines) {
+
+                        String s1 = line.substring(0, 8).trim();
+                        int idInLine = Integer.parseInt(s1);
+
+                        if (idInLine == id) {
+                            bufferedWriter.write(String.format("%-8d%-30s%-8.2f%-4d", idInLine, productName, price, quantity));
+                        } else {
+                            bufferedWriter.write(line);
+                        }
+                        bufferedWriter.newLine();
+
+                    }
+
+                    bufferedWriter.close();
+
+                }
+                case "-d" -> {
+                    BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
+                    int id = Integer.parseInt(args[1]);
+                    for (String line : lines) {
+
+                        String s1 = line.substring(0, 8).trim();
+                        int idInLine = Integer.parseInt(s1);
+
+                        if (idInLine == id) {
+                            lines.remove(line);
+                        }
+                    }
+                    for (String s : lines
+                    ) {
+                        bufferedWriter.write(s);
+                        bufferedWriter.newLine();
+                    }
+                    bufferedWriter.close();
+                }
+            }
+        }
+    }
+}
